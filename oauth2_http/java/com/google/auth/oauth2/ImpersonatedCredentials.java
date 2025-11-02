@@ -670,13 +670,18 @@ public class ImpersonatedCredentials extends GoogleCredentials
       throws IOException {
     boolean includeEmail =
         options != null && options.contains(IdTokenProvider.Option.INCLUDE_EMAIL);
+    ImmutableMap.Builder<String, Object> additionalFields = ImmutableMap.builder();
+    additionalFields.put("delegates", this.delegates);
+    if (this.quotaProjectId != null) {
+      additionalFields.put("quotaProjectId", this.quotaProjectId);
+    }
     return IamUtils.getIdToken(
         getAccount(),
         sourceCredentials,
         transportFactory.create(),
         targetAudience,
         includeEmail,
-        ImmutableMap.of("delegates", this.delegates),
+        additionalFields.build(),
         getMetricsCredentialType(),
         getUniverseDomain());
   }
